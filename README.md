@@ -219,8 +219,8 @@ These are not required but will make your project stand out:
 
 | Technology | Purpose |
 |---|---|
-| **React.js** | Build the UI |
-| **React Router DOM** | Handle page navigation |
+| **React.js/Next.js** | Build the UI |
+| **React Router DOM/App router(Next.js)** | Handle page navigation |
 | **Tailwind CSS+Any component library** | Styling and responsiveness |
 | **Recharts** | Bar chart and Pie chart |
 
