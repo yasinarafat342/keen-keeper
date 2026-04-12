@@ -19,7 +19,7 @@ If you are developing a production application, we recommend using TypeScript wi
 # 👥 KeenKeeper — Keep Your Friendships Alive
 
 ### 📅 Deadline For 60 marks: 17 April 2026 | ⏱️11:59PM
-### 📅 Deadline for 30 marks: Any time after 16 April 2026 | ⏱️11:59PM
+### 📅 Deadline for 30 marks: Any time after 17 April 2026
 
 ---
 
@@ -246,7 +246,7 @@ These are not required but will make your project stand out:
 
 ## 🚀 Deployment
 
-Deploy your project on **Vercel** or **Cloudflare Pages** before submitting.
+Deploy your project on **Vercel**, **Netlify**, **Cloudflare Pages**, or anywhere else before submitting.
 
 ---
 
