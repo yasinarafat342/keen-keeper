@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Phone, MessageSquare, Video, Bell, Archive, Trash2, Edit2, Clock } from 'lucide-react';
+import { useInteractions } from '../InteractionContext'; // কন্টেক্সট ইম্পোর্ট
+import toast, { Toaster } from 'react-hot-toast'; // নোটিফিকেশন এর জন্য
 
 const FriendDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [friend, setFriend] = useState(null);
-  const [interactions, setInteractions] = useState([]);
+  const { addInteraction } = useInteractions(); // কন্টেক্সট থেকে ফাংশন নেওয়া
 
   useEffect(() => {
-    // বন্ধু’র ডাটা লোড করা
     fetch('/friends.json')
       .then(res => res.json())
       .then(data => {
@@ -18,8 +19,10 @@ const FriendDetail = () => {
       });
   }, [id]);
 
-  // ইন্টারঅ্যাকশন হ্যান্ডলার (Timeline এ ডাটা পাঠানোর লজিক)
+  // ইন্টারঅ্যাকশন হ্যান্ডলার
   const handleInteraction = (type) => {
+    if (!friend) return;
+
     const newInteraction = {
       type: type,
       person: friend.name,
@@ -27,19 +30,31 @@ const FriendDetail = () => {
       timestamp: new Date().getTime()
     };
     
-    // এখানে আপনি API কল করে ডাটাবেজে সেভ করতে পারেন
-    console.log("Saving to Timeline:", newInteraction);
-    alert(`${type} interaction logged for ${friend.name}! Check your Timeline.`);
-    
-    // ইন্টারঅ্যাকশন শেষে টাইমলাইন পেজে নিয়ে যাবে
-    navigate('/timeline'); 
+    // টাইমলাইনে ডাটা পাঠানো
+    addInteraction(newInteraction);
+
+    // সুন্দর নোটিফিকেশন দেখানো
+    toast.success(`${type} interaction logged for ${friend.name}!`, {
+      style: {
+        borderRadius: '16px',
+        background: '#2B4E41',
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: '14px'
+      },
+    });
+
+    // চাইলে সরাসরি টাইমলাইনে নিয়ে যেতে পারো নিচের লাইনটি আনকমেন্ট করে
+    // setTimeout(() => navigate('/timeline'), 1500); 
   };
 
   if (!friend) return <div className="p-20 text-center font-black">Loading...</div>;
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-10 flex flex-col lg:row gap-8 bg-[#F9FAFB]">
-      
+    <div className="max-w-7xl mx-auto px-6 py-10 flex flex-col lg:flex-row gap-8 bg-[#F9FAFB]">
+      {/* নোটিফিকেশন হোল্ডার */}
+      <Toaster position="top-center" reverseOrder={false} />
+
       {/* --- Left Sidebar (Profile) --- */}
       <div className="lg:w-1/4 flex flex-col gap-6">
         <div className="bg-white rounded-[40px] p-8 shadow-sm border border-gray-100 flex flex-col items-center text-center">
@@ -67,13 +82,13 @@ const FriendDetail = () => {
 
         {/* Action Menu */}
         <div className="bg-white rounded-[24px] overflow-hidden shadow-sm border border-gray-100 font-bold text-sm text-gray-600">
-          <button className="w-full flex items-center gap-3 px-6 py-4 hover:bg-gray-50 border-b border-gray-50">
+          <button className="w-full flex items-center gap-3 px-6 py-4 hover:bg-gray-50 border-b border-gray-50 transition-colors">
             <Bell size={18} /> Snooze 2 Weeks
           </button>
-          <button className="w-full flex items-center gap-3 px-6 py-4 hover:bg-gray-50 border-b border-gray-50">
+          <button className="w-full flex items-center gap-3 px-6 py-4 hover:bg-gray-50 border-b border-gray-50 transition-colors">
             <Archive size={18} /> Archive
           </button>
-          <button className="w-full flex items-center gap-3 px-6 py-4 text-red-500 hover:bg-red-50">
+          <button className="w-full flex items-center gap-3 px-6 py-4 text-red-500 hover:bg-red-50 transition-colors">
             <Trash2 size={18} /> Delete Profile
           </button>
         </div>
@@ -100,7 +115,7 @@ const FriendDetail = () => {
 
         {/* Relationship Goal */}
         <div className="bg-white p-8 rounded-[32px] shadow-sm border border-gray-100 relative">
-          <button className="absolute top-6 right-8 text-gray-400 border border-gray-200 px-3 py-1 rounded-lg text-xs font-black flex items-center gap-1 hover:bg-gray-50">
+          <button className="absolute top-6 right-8 text-gray-400 border border-gray-200 px-3 py-1 rounded-lg text-xs font-black flex items-center gap-1 hover:bg-gray-50 transition-all">
             <Edit2 size={14} /> Edit
           </button>
           <h4 className="text-[10px] font-black text-gray-900 mb-4 uppercase tracking-[0.2em]">Relationship Goal</h4>
@@ -139,12 +154,12 @@ const FriendDetail = () => {
         <div className="bg-white rounded-[32px] shadow-sm border border-gray-100 overflow-hidden">
           <div className="flex justify-between items-center p-6 border-b border-gray-50">
             <h4 className="text-[10px] font-black text-gray-900 uppercase tracking-[0.2em]">Recent Interactions</h4>
-            <button onClick={() => navigate('/timeline')} className="flex items-center gap-1 text-gray-400 text-[10px] font-black border border-gray-200 px-3 py-1 rounded-lg hover:bg-gray-50">
+            <button onClick={() => navigate('/timeline')} className="flex items-center gap-1 text-gray-400 text-[10px] font-black border border-gray-200 px-3 py-1 rounded-lg hover:bg-gray-50 transition-all">
               <Clock size={14} /> Full History
             </button>
           </div>
           <div className="py-12 text-center">
-             <p className="text-gray-300 font-black uppercase text-[10px] tracking-widest">No interactions logged yet</p>
+             <p className="text-gray-300 font-black uppercase text-[10px] tracking-widest italic">Interactions are logged to your central timeline</p>
           </div>
         </div>
       </div>
